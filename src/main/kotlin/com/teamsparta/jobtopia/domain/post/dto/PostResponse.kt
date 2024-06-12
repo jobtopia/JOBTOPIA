@@ -7,5 +7,5 @@ data class PostResponse (
     val title : String,
     val content : String,
     val createdAt : LocalDateTime,
-    val deleted : Boolean,
+    val isDeleted : Boolean,
 )

@@ -25,7 +25,7 @@ class Post(
     var deletedAt: LocalDateTime? = null,
 
     @Column(name = "is_deleted", nullable = false)
-    var deleted: Boolean = false,
+    var isDeleted: Boolean = false,
 ){
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,7 +33,7 @@ class Post(
 
 
     fun softDeleted(){
-        deleted = true
+        isDeleted = true
     }
 }
 
@@ -43,7 +43,7 @@ class Post(
             title = title,
             content = content,
             createdAt = createdAt,
-            deleted = deleted
+            isDeleted = isDeleted
     )
 
 }
@@ -56,6 +56,6 @@ class Post(
             content = content,
             createdAt = createdAt,
             updatedAt = updatedAt!!,
-            deleted = deleted
+            isDeleted = isDeleted
         )
     }

@@ -21,13 +21,13 @@ class PostServiceImpl(
 ): PostService {
 
     override fun getPostList(pageable: Pageable): Page<PostResponse> {
-        return postRepository.findByDeletedFalse(pageable).map { it.toResponse() }
+        return postRepository. findByisDeletedFalse(pageable).map { it.toResponse() }
     }
 
 
     override fun getPostById(postId: Long): PostResponse {
         val post = postRepository.findByIdOrNull(postId) ?: throw ModelNotFoundException("삭제된 게시글입니다.", postId)
-        if (post.deleted) throw ModelNotFoundException("삭제된 게시글입니다.", postId)
+        if (post.isDeleted) throw ModelNotFoundException("삭제된 게시글입니다.", postId)
 
         return post.toResponse()
     }
@@ -47,7 +47,7 @@ class PostServiceImpl(
     @Transactional
     override fun updatePost(postId: Long, postRequest: PostRequest): UpdatePostResponse {
         val post = postRepository.findByIdOrNull(postId) ?: throw ModelNotFoundException("삭제된 게시글입니다.", postId)
-        if (post.deleted) throw ModelNotFoundException("삭제된 게시글입니다.", postId)
+        if (post.isDeleted) throw ModelNotFoundException("삭제된 게시글입니다.", postId)
 
         val (title, content) = postRequest
         post.title = title
@@ -60,7 +60,7 @@ class PostServiceImpl(
     @Transactional
     override fun deletePost(postId: Long) {
         val post = postRepository.findByIdOrNull(postId) ?: throw ModelNotFoundException("없는 게시글입니다.", postId)
-        if (post.deleted) throw ModelNotFoundException("이미 삭제된 게시글 ", postId)
+        if (post.isDeleted) throw ModelNotFoundException("이미 삭제된 게시글 ", postId)
         post.softDeleted()
         post.deletedAt = LocalDateTime.now()
 

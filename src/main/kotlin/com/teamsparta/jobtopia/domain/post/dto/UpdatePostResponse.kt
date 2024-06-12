@@ -9,5 +9,5 @@ data class UpdatePostResponse(
     val content : String,
     val createdAt : LocalDateTime,
     val updatedAt  : LocalDateTime,
-    val deleted : Boolean,
+    val isDeleted : Boolean,
 )

@@ -8,5 +8,5 @@ import org.springframework.data.jpa.repository.JpaRepository
 
 
 interface  PostRepository: JpaRepository<Post, Long> {
-    fun findByDeletedFalse(pageable: Pageable): Page<Post>
+    fun findByisDeletedFalse(pageable: Pageable): Page<Post>
 }
