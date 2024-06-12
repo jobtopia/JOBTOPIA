@@ -1,5 +1,6 @@
 package com.teamsparta.jobtopia.infra.security.config
 
+import com.teamsparta.jobtopia.infra.security.jwt.JwtAuthenticationFilter
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpMethod
@@ -11,7 +12,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 class SecurityConfig (
-//    private val jwtAuthenticationFilter: JwtAuthenticationFilter
+    private val jwtAuthenticationFilter: JwtAuthenticationFilter
 ){
 
     @Bean
@@ -28,7 +29,7 @@ class SecurityConfig (
                     .requestMatchers(HttpMethod.POST, "/api/v1/login").permitAll()
                     .anyRequest().authenticated()
             }
-//            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
+            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
             .build()
     }
 }
