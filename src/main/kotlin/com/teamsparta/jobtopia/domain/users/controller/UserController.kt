@@ -1,5 +1,7 @@
 package com.teamsparta.jobtopia.domain.users.controller
 
+import com.teamsparta.jobtopia.domain.users.dto.LoginRequest
+import com.teamsparta.jobtopia.domain.users.dto.LoginResponse
 import com.teamsparta.jobtopia.domain.users.dto.SignUpRequest
 import com.teamsparta.jobtopia.domain.users.dto.UserDto
 import com.teamsparta.jobtopia.domain.users.service.UserService
@@ -25,4 +27,11 @@ class UserController(
             .body(userService.signUp(signUpRequest))
     }
 
+    @PostMapping("/login")
+    fun signIn(@RequestBody loginRequest: LoginRequest): ResponseEntity<LoginResponse> {
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .body(userService.login(loginRequest))
+
+    }
 }
