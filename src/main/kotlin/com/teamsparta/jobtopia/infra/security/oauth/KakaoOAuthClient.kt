@@ -1,7 +1,10 @@
 package com.teamsparta.jobtopia.infra.security.oauth
 
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.stereotype.Component
 
+
+@Component
 class KakaoOAuthClient(
     @Value("\${oauth2.kakao.client_id}") val clientId : String,
     @Value("\${oauth2.kakao.redirect_url}") val redirectUrl : String,
@@ -13,7 +16,7 @@ class KakaoOAuthClient(
             .append("/oauth/authorize")
             .append("?client_id=").append(clientId)
             .append("&redirect_uri=").append(redirectUrl)
-            .append("&response_type)=").append("code")
+            .append("&response_type=").append("code")
             .toString()
     }
 
