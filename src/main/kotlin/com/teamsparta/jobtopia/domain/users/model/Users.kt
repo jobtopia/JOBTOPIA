@@ -16,7 +16,7 @@ class Users(
 
     @Enumerated(EnumType.STRING)
     @Column(name = "role")
-    val role: UserRole,
+    val role: UserRole = UserRole.USER,
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
