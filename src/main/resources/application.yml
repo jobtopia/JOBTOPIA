@@ -1,0 +1,6 @@
+oauth2:
+  kakao:
+    client_id: "2adeb497dca156d9ad72ce17b0d73691"
+    redirect_uri: "http://localhost:8080/kakao/callback"
+    auth_server_base_url: "https://kauth.kakao.com"
+    resource_server_base_url: "https://kapi.kakao.com"
