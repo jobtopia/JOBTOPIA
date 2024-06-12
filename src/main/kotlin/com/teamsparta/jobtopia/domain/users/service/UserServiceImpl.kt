@@ -1,5 +1,6 @@
 package com.teamsparta.jobtopia.domain.users.service
 
+import com.teamsparta.jobtopia.domain.common.exception.InvalidCredentialException
 import com.teamsparta.jobtopia.domain.users.dto.SignUpRequest
 import com.teamsparta.jobtopia.domain.users.dto.UserDto
 import com.teamsparta.jobtopia.domain.users.model.Profile
@@ -17,7 +18,7 @@ class UserServiceImpl(
 ) : UserService {
     override fun signUp(request: SignUpRequest): UserDto {
         if (userRepository.findByUserName(request.userName) != null) {
-            throw IllegalArgumentException("Username already exists")
+            throw InvalidCredentialException("Username already exists")
         }
         val user = userRepository.save(
             Users(
