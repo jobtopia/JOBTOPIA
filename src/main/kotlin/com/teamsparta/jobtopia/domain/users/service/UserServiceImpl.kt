@@ -12,6 +12,7 @@ import com.teamsparta.jobtopia.domain.users.repository.UserRepository
 import com.teamsparta.jobtopia.infra.security.jwt.JwtPlugin
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class UserServiceImpl(
@@ -19,6 +20,9 @@ class UserServiceImpl(
     private val passwordEncoder: PasswordEncoder,
     private val jwtPlugin: JwtPlugin
 ) : UserService {
+    private val tokenBlacklist = mutableSetOf<String>()
+
+    @Transactional
     override fun signUp(request: SignUpRequest): UserDto {
         if (userRepository.findByUserName(request.userName) != null) {
             throw InvalidCredentialException("Username already exists")
@@ -46,6 +50,14 @@ class UserServiceImpl(
                 userName = user.userName,
             )
         )
+    }
+
+    override fun logout(token: String) {
+        tokenBlacklist.add(token)
+    }
+
+    fun isTokenBlacklisted(token: String): Boolean {
+        return tokenBlacklist.contains(token)
     }
 
 }

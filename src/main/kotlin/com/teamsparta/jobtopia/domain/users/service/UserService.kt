@@ -8,4 +8,5 @@ import com.teamsparta.jobtopia.domain.users.dto.UserDto
 interface UserService {
     fun signUp(request: SignUpRequest): UserDto
     fun login(loginRequest: LoginRequest): LoginResponse
+    fun logout(token: String)
 }

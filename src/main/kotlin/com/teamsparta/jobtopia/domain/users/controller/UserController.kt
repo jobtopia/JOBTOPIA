@@ -5,6 +5,7 @@ import com.teamsparta.jobtopia.domain.users.dto.LoginResponse
 import com.teamsparta.jobtopia.domain.users.dto.SignUpRequest
 import com.teamsparta.jobtopia.domain.users.dto.UserDto
 import com.teamsparta.jobtopia.domain.users.service.UserService
+import jakarta.servlet.http.HttpServletRequest
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -34,4 +35,13 @@ class UserController(
             .body(userService.login(loginRequest))
 
     }
+
+    @PostMapping("/logout")
+    fun logout(request: HttpServletRequest): ResponseEntity<Unit> {
+        val token = request.getAttribute("accessToken") as String?
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .body(userService.logout(token!!))
+    }
+
 }
