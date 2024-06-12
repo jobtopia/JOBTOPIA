@@ -16,6 +16,9 @@ class UserServiceImpl(
     private val jwtPlugin: JwtPlugin
 ) : UserService {
     override fun signUp(request: SignUpRequest): UserDto {
+        if (userRepository.findByUserName(request.userName) != null) {
+            throw IllegalArgumentException("Username already exists")
+        }
         val user = userRepository.save(
             Users(
                 userName = request.userName,
