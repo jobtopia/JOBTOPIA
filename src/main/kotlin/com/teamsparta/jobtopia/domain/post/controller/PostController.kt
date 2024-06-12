@@ -1,9 +1,11 @@
-package com.teamsparta.jobtopia.post.controller
+package com.teamsparta.jobtopia.domain.post.controller
 
 
-import com.teamsparta.jobtopia.post.dto.PostRequest
-import com.teamsparta.jobtopia.post.dto.PostResponse
-import com.teamsparta.jobtopia.post.service.PostService
+
+import com.teamsparta.jobtopia.domain.post.dto.PostRequest
+import com.teamsparta.jobtopia.domain.post.dto.PostResponse
+import com.teamsparta.jobtopia.domain.post.dto.UpdatePostResponse
+import com.teamsparta.jobtopia.domain.post.service.PostService
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.web.PageableDefault
@@ -16,7 +18,6 @@ import org.springframework.web.bind.annotation.*
 class PostController(
     private val postService: PostService,
 ) {
-
 
     @GetMapping
     fun getPostList(@PageableDefault pageable: Pageable):ResponseEntity<Page<PostResponse>>{
@@ -34,7 +35,7 @@ class PostController(
     }
 
     @PutMapping("/{postId}")
-       fun updatePost(@PathVariable postId: Long, @RequestBody postRequest:PostRequest): ResponseEntity<PostResponse> {
+       fun updatePost(@PathVariable postId: Long, @RequestBody postRequest:PostRequest): ResponseEntity<UpdatePostResponse> {
          return ResponseEntity.status(HttpStatus.OK).body(postService.updatePost(postId, postRequest))
     }
 
@@ -42,7 +43,6 @@ class PostController(
       fun deletePost(@PathVariable postId: Long): ResponseEntity<Unit> {
          return ResponseEntity.status(HttpStatus.NO_CONTENT).body(postService.deletePost(postId))
     }
-
 
 
 }
