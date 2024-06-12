@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable
 
 
 interface PostService {
+
     fun getPostList(pageable: Pageable): Page<PostResponse>
     fun getPostById(postId: Long):PostResponse
     fun createPost(postRequest: PostRequest):PostResponse

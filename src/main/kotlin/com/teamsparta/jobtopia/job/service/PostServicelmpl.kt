@@ -16,6 +16,7 @@ import java.time.LocalDateTime
 class PostServicelmpl(
     private val postRepository: PostRepository,
 ):PostService{
+
     override fun getPostList(pageable: Pageable): Page<PostResponse> {
        return postRepository.findAll(pageable).map { it.toResponse() }
     }
