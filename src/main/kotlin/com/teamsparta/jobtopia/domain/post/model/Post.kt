@@ -3,7 +3,6 @@ package com.teamsparta.jobtopia.domain.post.model
 
 import com.teamsparta.jobtopia.domain.post.dto.PostRequest
 import com.teamsparta.jobtopia.domain.post.dto.PostResponse
-import com.teamsparta.jobtopia.domain.post.dto.UpdatePostResponse
 import com.teamsparta.jobtopia.domain.users.model.Users
 import jakarta.persistence.*
 import java.time.LocalDateTime
@@ -59,17 +58,5 @@ class Post(
             createdAt = createdAt,
             isDeleted = isDeleted
     )
-
 }
 
-
-    fun Post.toUpdatePostResponse(): UpdatePostResponse {
-        return UpdatePostResponse(
-            id = id!!,
-            title = title,
-            content = content,
-            createdAt = createdAt,
-            updatedAt = updatedAt!!,
-            isDeleted = isDeleted
-        )
-    }
