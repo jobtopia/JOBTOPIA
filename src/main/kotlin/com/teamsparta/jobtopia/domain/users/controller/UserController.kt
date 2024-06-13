@@ -1,18 +1,14 @@
 package com.teamsparta.jobtopia.domain.users.controller
 
-import com.teamsparta.jobtopia.domain.users.dto.LoginRequest
-import com.teamsparta.jobtopia.domain.users.dto.LoginResponse
-import com.teamsparta.jobtopia.domain.users.dto.SignUpRequest
-import com.teamsparta.jobtopia.domain.users.dto.UserDto
+import com.teamsparta.jobtopia.domain.users.dto.*
 import com.teamsparta.jobtopia.domain.users.service.UserService
+import com.teamsparta.jobtopia.infra.security.UserPrincipal
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.security.core.annotation.AuthenticationPrincipal
+import org.springframework.web.bind.annotation.*
 
 @RequestMapping("/api/v1")
 @RestController
@@ -42,6 +38,17 @@ class UserController(
         return ResponseEntity
             .status(HttpStatus.OK)
             .body(userService.logout(token!!))
+    }
+
+    @PatchMapping("/users/profile")
+    fun updateProfile(
+        request: HttpServletRequest,
+        @AuthenticationPrincipal principal: UserPrincipal,
+        @Valid @RequestBody profile: UserUpdateProfileDto
+    ): ResponseEntity<UserDto> {
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .body(userService.updateProfile(profile, principal.id))
     }
 
 }
