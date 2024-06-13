@@ -16,7 +16,7 @@ import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.core.Authentication
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.time.LocalDateTime
+
 
 @Service
 class PostServiceImpl(
@@ -61,7 +61,7 @@ class PostServiceImpl(
 
         if (post.isDeleted) throw ModelNotFoundException("삭제된 게시글입니다.", postId)
 
-       post.createPostRequest(postRequest)
+        post.createPostRequest(postRequest)
         return postRepository.save(post).toUpdatePostResponse()
     }
 
@@ -78,7 +78,6 @@ class PostServiceImpl(
         if (post.isDeleted) throw ModelNotFoundException("삭제된 게시글입니다.", postId)
 
         post.softDeleted()
-        post.deletedAt = LocalDateTime.now()
 
     }
 
