@@ -1,8 +1,10 @@
 package com.teamsparta.jobtopia.domain.post.model
 
 
+import com.teamsparta.jobtopia.domain.post.dto.PostRequest
 import com.teamsparta.jobtopia.domain.post.dto.PostResponse
 import com.teamsparta.jobtopia.domain.post.dto.UpdatePostResponse
+import com.teamsparta.jobtopia.domain.users.model.Users
 import jakarta.persistence.*
 import java.time.LocalDateTime
 
@@ -26,6 +28,11 @@ class Post(
 
     @Column(name = "is_deleted", nullable = false)
     var isDeleted: Boolean = false,
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    var users : Users
+
 ){
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,6 +41,13 @@ class Post(
 
     fun softDeleted(){
         isDeleted = true
+        deletedAt =LocalDateTime.now()
+    }
+
+    fun createPostRequest(postRequest: PostRequest){
+        title = postRequest.title
+        content = postRequest.content
+        updatedAt = LocalDateTime.now()
     }
 }
 

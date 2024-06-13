@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable
 import org.springframework.data.web.PageableDefault
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.*
 
 @RequestMapping("/api/v1/posts")
@@ -30,18 +31,18 @@ class PostController(
         }
 
     @PostMapping
-        fun createPost(@RequestBody postRequest: PostRequest): ResponseEntity<PostResponse> {
-          return ResponseEntity.status(HttpStatus.CREATED).body(postService.createPost(postRequest))
+        fun createPost(@RequestBody postRequest: PostRequest,authentication: Authentication): ResponseEntity<PostResponse> {
+          return ResponseEntity.status(HttpStatus.CREATED).body(postService.createPost(postRequest, authentication))
     }
 
     @PutMapping("/{postId}")
-       fun updatePost(@PathVariable postId: Long, @RequestBody postRequest:PostRequest): ResponseEntity<UpdatePostResponse> {
-         return ResponseEntity.status(HttpStatus.OK).body(postService.updatePost(postId, postRequest))
+       fun updatePost(@PathVariable postId: Long, @RequestBody postRequest:PostRequest,authentication: Authentication): ResponseEntity<UpdatePostResponse> {
+         return ResponseEntity.status(HttpStatus.OK).body(postService.updatePost(postId, postRequest, authentication))
     }
 
     @DeleteMapping("/{postId}")
-      fun deletePost(@PathVariable postId: Long): ResponseEntity<Unit> {
-         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(postService.deletePost(postId))
+      fun deletePost(@PathVariable postId: Long,authentication: Authentication): ResponseEntity<Unit> {
+         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(postService.deletePost(postId,authentication))
     }
 
 
