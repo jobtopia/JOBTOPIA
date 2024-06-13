@@ -11,4 +11,8 @@ class OAuthService(
     fun getLoginPage() {
         kakaoOAuthClient.getLoginPageUrl()
     }
+
+    fun getAccessToken(code: String) {
+        kakaoOAuthClient.getAccessToken(code)
+    }
 }
