@@ -13,6 +13,8 @@ class OAuthService(
     }
 
     fun getAccessToken(code: String) {
-        kakaoOAuthClient.getAccessToken(code)
+        val accessToken = kakaoOAuthClient.getAccessToken(code)
+        kakaoOAuthClient.getUserInfo(accessToken)
+
     }
 }

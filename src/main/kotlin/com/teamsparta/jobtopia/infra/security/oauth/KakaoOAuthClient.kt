@@ -47,6 +47,16 @@ class KakaoOAuthClient(
     }
 
     override fun getUserInfo(accessToken: String): OAuthUserInfoResponse {
-        TODO("Not yet implemented")
+        return restClient.get()
+            .uri("$resourceServerBaseUrl/v2/user/me")
+            .header("Authorization", "Bearar $accessToken")
+            .retrieve()
+            .onStatus(HttpStatusCode::isError) { _, response ->
+                throw RuntimeException("${response.statusCode} kakao user 조회 실패")
+            }
+            .body<KakaoOAuthUserInfo>()
+            ?:throw RuntimeException("kakao user 조회 실패")
+
+
     }
 }
