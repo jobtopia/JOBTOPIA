@@ -1,5 +1,6 @@
 package com.teamsparta.jobtopia.domain.users.model
 
+import com.teamsparta.jobtopia.domain.users.dto.UserUpdateProfileDto
 import jakarta.persistence.*
 
 @Entity
@@ -9,10 +10,15 @@ class Users(
     val userName: String,
 
     @Column(name = "password")
-    val password: String,
+    var password: String,
 
     @Embedded
     var profile: Profile,
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "password_history", joinColumns = [JoinColumn(name = "user_id")])
+    @Column(name = "password")
+    var passwordHistory: MutableList<String> = mutableListOf(),
 
     @Enumerated(EnumType.STRING)
     @Column(name = "role")
@@ -21,4 +27,10 @@ class Users(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long? = null
+
+    fun updateProfile(profileDto: UserUpdateProfileDto, password: String) {
+        this.password = password
+        this.profile.nickname = profileDto.nickname
+        this.profile.description = profileDto.description
+    }
 }
