@@ -22,5 +22,17 @@ class GlobalExceptionHandler {
         return ResponseEntity
             .status(HttpStatus.UNAUTHORIZED)
             .body(ErrorResponse(e.message))
+    }  
+  
+    @ExceptionHandler(KakaoAccessTokenException::class)
+    fun handleKakaoAccessTokenException(ex: KakaoAccessTokenException): ResponseEntity<ErrorResponse> {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ErrorResponse(message = ex.message))
     }
+
+    @ExceptionHandler(KakaoUserInfoException::class)
+    fun handleKakaoUserInfoException(ex: KakaoUserInfoException): ResponseEntity<ErrorResponse> {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ErrorResponse(message = ex.message))
+    }
+
+
 }
