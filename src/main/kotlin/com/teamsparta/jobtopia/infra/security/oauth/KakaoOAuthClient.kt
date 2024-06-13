@@ -1,5 +1,7 @@
 package com.teamsparta.jobtopia.infra.security.oauth
 
+import com.teamsparta.jobtopia.domain.common.exception.KakaoAccessTokenException
+import com.teamsparta.jobtopia.domain.common.exception.KakaoUserInfoException
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatusCode
 import org.springframework.http.MediaType
@@ -39,11 +41,11 @@ class KakaoOAuthClient(
             .body(LinkedMultiValueMap<String,String>().apply { this.setAll(requestData) })
             .retrieve()
             .onStatus(HttpStatusCode::isError) { _, response ->
-                throw RuntimeException("${response.statusCode} kakao AccessToken 조회 실패")
+                throw KakaoAccessTokenException("${response.statusCode} kakao AccessToken 조회 실패")
             }
             .body<KakaoTokenResponse>()
             ?.accessToken
-            ?:throw RuntimeException("kakao AccessToken 조회 실패")
+            ?:throw KakaoAccessTokenException("kakao AccessToken 조회 실패")
     }
 
     override fun getUserInfo(accessToken: String): OAuthUserInfoResponse {
@@ -52,10 +54,10 @@ class KakaoOAuthClient(
             .header("Authorization", "Bearer $accessToken")
             .retrieve()
             .onStatus(HttpStatusCode::isError) { _, response ->
-                throw RuntimeException("${response.statusCode} kakao user 조회 실패")
+                throw KakaoUserInfoException("${response.statusCode} kakao user 조회 실패")
             }
             .body<KakaoOAuthUserInfo>()
-            ?:throw RuntimeException("kakao user 조회 실패")
+            ?:throw KakaoUserInfoException("kakao user 조회 실패")
 
 
     }
