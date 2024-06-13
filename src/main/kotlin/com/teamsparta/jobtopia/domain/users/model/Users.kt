@@ -15,6 +15,11 @@ class Users(
     @Embedded
     var profile: Profile,
 
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "password_history", joinColumns = [JoinColumn(name = "user_id")])
+    @Column(name = "password")
+    var passwordHistory: MutableList<String> = mutableListOf(),
+
     @Enumerated(EnumType.STRING)
     @Column(name = "role")
     val role: UserRole = UserRole.USER,

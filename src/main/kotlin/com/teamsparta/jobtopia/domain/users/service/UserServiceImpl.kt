@@ -2,6 +2,7 @@ package com.teamsparta.jobtopia.domain.users.service
 
 import com.teamsparta.jobtopia.domain.common.exception.InvalidCredentialException
 import com.teamsparta.jobtopia.domain.common.exception.ModelNotFoundException
+import com.teamsparta.jobtopia.domain.common.util.password.PasswordHistory
 import com.teamsparta.jobtopia.domain.users.dto.*
 import com.teamsparta.jobtopia.domain.users.model.Profile
 import com.teamsparta.jobtopia.domain.users.model.Users
@@ -16,7 +17,8 @@ import org.springframework.transaction.annotation.Transactional
 class UserServiceImpl(
     private val userRepository: UserRepository,
     private val passwordEncoder: PasswordEncoder,
-    private val jwtPlugin: JwtPlugin
+    private val jwtPlugin: JwtPlugin,
+    private val passwordHistory: PasswordHistory
 ) : UserService {
     private val tokenBlacklist = mutableSetOf<String>()
 
@@ -57,8 +59,10 @@ class UserServiceImpl(
     override fun updateProfile(profile: UserUpdateProfileDto, userId: Long): UserDto {
         val user = userRepository.findByIdOrNull(userId) ?: throw ModelNotFoundException("Users", userId)
         if (profile.password != profile.confirmPassword) throw InvalidCredentialException()
+        if (passwordHistory.isPasswordInHistory(user, profile.password)) throw InvalidCredentialException("최근 3번 사용한 비밀번호는 사용할 수 없습니다.")
         val password = passwordEncoder.encode(profile.password)
         user.updateProfile(profile, password)
+        passwordHistory.updatePasswordHistory(user, password)
         return UserDto.fromEntity(user)
     }
 
