@@ -1,5 +1,6 @@
 package com.teamsparta.jobtopia.domain.reaction.model
 
+import com.teamsparta.jobtopia.domain.comment.model.Comment
 import com.teamsparta.jobtopia.domain.post.model.Post
 import com.teamsparta.jobtopia.domain.reaction.dto.ReactionResponse
 import com.teamsparta.jobtopia.domain.users.model.Users
@@ -15,11 +16,11 @@ class Reaction (
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id", nullable = true)
-    val post: Post,
+    val post: Post? = null,
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "comment_id", nullable = true)
-//    val comment: Comment,
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "comment_id", nullable = true)
+    val comment: Comment? = null,
 
     @Enumerated(EnumType.STRING)
     @Column(name = "reaction", nullable = false)

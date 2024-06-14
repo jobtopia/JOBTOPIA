@@ -36,7 +36,7 @@ class PostServiceImpl(
         val reactionList = mutableListOf<ReactionResponse>()
 
         postIds.forEach { id ->
-            val reaction = reactionService.getCountPostReactions(id)
+            val reaction = reactionService.getCountReactions(id, null)
             reactionList.add(reaction)
         }
 
@@ -54,7 +54,7 @@ class PostServiceImpl(
         val post = postRepository.findByIdOrNull(postId) ?: throw ModelNotFoundException("삭제된 게시글입니다.", postId)
         if (post.isDeleted) throw ModelNotFoundException("삭제된 게시글입니다.", postId)
 
-        val reaction = reactionService.getCountPostReactions(postId)
+        val reaction = reactionService.getCountReactions(postId, null)
 
         return GetPostResponse.from(post, reaction)
     }
@@ -85,7 +85,7 @@ class PostServiceImpl(
         if (post.isDeleted) throw ModelNotFoundException("삭제된 게시글입니다.", postId)
 
         post.createPostRequest(postRequest)
-        val reaction = reactionService.getCountPostReactions(post.id!!)
+        val reaction = reactionService.getCountReactions(post.id!!, null)
         return GetPostResponse.from(postRepository.save(post), reaction)
     }
 
@@ -102,7 +102,7 @@ class PostServiceImpl(
         if (post.isDeleted) throw ModelNotFoundException("삭제된 게시글입니다.", postId)
 
         post.softDeleted()
-        reactionService.deletePostReaction(post)
+        reactionService.deleteReaction(post, null)
 
         post.deletedAt = LocalDateTime.now()
 
@@ -112,14 +112,14 @@ class PostServiceImpl(
         val post = postRepository.findByIdOrNull(postId) ?: throw ModelNotFoundException("Post", postId)
         if (post.isDeleted) throw ModelNotFoundException("삭제된 게시글입니다.", postId)
 
-        reactionService.updatePostReaction(userId, post, ReactionType.LIKE)
+        reactionService.updateReaction(userId, post, null, ReactionType.LIKE)
     }
 
     override fun postDisLikeReaction(postId: Long, userId: Long) {
         val post = postRepository.findByIdOrNull(postId) ?: throw ModelNotFoundException("Post", postId)
         if (post.isDeleted) throw ModelNotFoundException("삭제된 게시글입니다.", postId)
 
-        reactionService.updatePostReaction(userId, post, ReactionType.DISLIKE)
+        reactionService.updateReaction(userId, post, null, ReactionType.DISLIKE)
     }
 
     override fun getFollowingUserPostList(pageable: Pageable, userId: Long): Page<GetPostResponse> {
