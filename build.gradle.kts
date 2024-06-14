@@ -46,6 +46,10 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-aop")
     implementation("io.jsonwebtoken:jjwt-api:0.12.3")
+    implementation("org.springframework.cloud:spring-cloud-starter-aws:2.3.0.RELEASE")
+    implementation("com.amazonaws:aws-java-sdk-s3:1.12.741")
+
+
 
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
