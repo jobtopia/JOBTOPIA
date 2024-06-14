@@ -13,7 +13,8 @@ data class GetPostResponse(
     val updatedAt  : LocalDateTime?,
     val isDeleted : Boolean,
     var like : Int = 0,
-    var dislike : Int = 0
+    var dislike : Int = 0,
+    val comments: List<CommentDTO> = emptyList()
 ) {
     companion object {
         fun from(post: Post, reaction: ReactionResponse): GetPostResponse {
@@ -36,6 +37,19 @@ data class GetPostResponse(
                 post.createdAt,
                 post.updatedAt,
                 post.isDeleted,
+            )
+        }
+        fun from(post: Post, reaction: ReactionResponse, comments: List<CommentDTO>): GetPostResponse {
+            return GetPostResponse(
+                post.id!!,
+                post.title,
+                post.content,
+                post.createdAt,
+                post.updatedAt,
+                post.isDeleted,
+                reaction.like,
+                reaction.dislike,
+                comments
             )
         }
     }
