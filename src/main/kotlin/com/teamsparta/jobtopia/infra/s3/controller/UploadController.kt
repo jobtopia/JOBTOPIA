@@ -1,23 +1,29 @@
 package com.teamsparta.jobtopia.infra.s3.controller
 
 
+
+import com.teamsparta.jobtopia.infra.s3.dto.ImageUploadResponse
 import com.teamsparta.jobtopia.infra.s3.service.S3Service
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.http.MediaType
+import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
 
 
 @RestController
-@RequestMapping("/upload")
-class UploadController(
+@RequestMapping("/api/images")
+class S3Controller(
     private val s3Service: S3Service
-){
-    @PostMapping
-     fun profileUpload(@RequestParam("file") file: MultipartFile) {
-         //TODO DTO 추가? service 추가?
-     }
+) {
+
+    @PostMapping(consumes = [MediaType.MULTIPART_FORM_DATA_VALUE], produces =
+    [MediaType.APPLICATION_XML_VALUE])
+    fun uploadImage(
+        @RequestParam("file") file: MultipartFile,
+    ): ResponseEntity<ImageUploadResponse> {
+        return ResponseEntity
+            .ok(ImageUploadResponse(url=s3Service.upload(file)))
+    }
 }
 
 
