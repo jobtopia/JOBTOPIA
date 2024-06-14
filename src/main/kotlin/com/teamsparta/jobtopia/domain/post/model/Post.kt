@@ -1,6 +1,7 @@
 package com.teamsparta.jobtopia.domain.post.model
 
 
+import com.teamsparta.jobtopia.domain.comment.model.Comment
 import com.teamsparta.jobtopia.domain.post.dto.PostRequest
 import com.teamsparta.jobtopia.domain.post.dto.PostResponse
 import com.teamsparta.jobtopia.domain.users.model.Users
@@ -30,7 +31,10 @@ class Post(
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
-    var users : Users
+    var users : Users,
+
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = [CascadeType.ALL], orphanRemoval = true)
+    val comments: MutableList<Comment> = mutableListOf()
 
 ){
     @Id
