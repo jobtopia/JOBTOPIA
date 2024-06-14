@@ -8,7 +8,6 @@ import com.amazonaws.services.s3.model.ObjectMetadata
 import com.amazonaws.services.s3.model.PutObjectRequest
 import com.amazonaws.util.IOUtils
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.context.annotation.PropertySource
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 import java.io.ByteArrayInputStream
@@ -16,16 +15,15 @@ import java.io.IOException
 import java.util.*
 
 
-@PropertySource("classpath:aws.yml")
 @Service
 class S3Service(
     private val amazonS3Client: AmazonS3
 ) {
 
-    @Value("\${bucket}")
+    @Value("\${cloud.aws.s3.bucket}")
     lateinit var bucket: String
 
-    @Value("\${dir}")
+    @Value("\${cloud.aws.s3.dir}")
     lateinit var dir: String
 
     @Throws(IOException::class)
