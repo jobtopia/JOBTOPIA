@@ -1,5 +1,6 @@
 package com.teamsparta.jobtopia.domain.post.service
 
+import com.teamsparta.jobtopia.domain.comment.dto.CommentDTO
 import com.teamsparta.jobtopia.domain.common.exception.ModelNotFoundException
 import com.teamsparta.jobtopia.domain.follow.repository.FollowRepository
 import com.teamsparta.jobtopia.domain.post.dto.GetPostResponse
@@ -44,7 +45,7 @@ class PostServiceImpl(
 
         return post.map {
             val reaction = postToReaction[it.id]
-            GetPostResponse.from(it, reaction!!)
+            GetPostResponse.from(it, reaction!!, it.comments.map { comment -> CommentDTO.from(comment) })
         }
 
     }
@@ -56,7 +57,7 @@ class PostServiceImpl(
 
         val reaction = reactionService.getCountPostReactions(postId)
 
-        return GetPostResponse.from(post, reaction)
+        return GetPostResponse.from(post, reaction, post.comments.map { comment -> CommentDTO.from(comment) })
     }
 
 
