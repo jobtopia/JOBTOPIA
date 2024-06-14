@@ -88,4 +88,15 @@ class PostController(
 
         return ResponseEntity.status(HttpStatus.OK).build()
     }
+
+    @GetMapping("/follow")
+    fun getFollowingUserPostList(
+        @PageableDefault pageable: Pageable,
+        @AuthenticationPrincipal principal: UserPrincipal
+    ):ResponseEntity<List<GetPostResponse>>{
+        val followPostList = postService.getFollowingUserPostList(pageable, principal.id)
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .body(followPostList.content)
+    }
 }
