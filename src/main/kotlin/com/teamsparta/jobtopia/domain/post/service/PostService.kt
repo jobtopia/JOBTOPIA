@@ -17,4 +17,5 @@ interface PostService {
     fun deletePost(postId: Long,authentication: Authentication)
     fun postLikeReaction(postId: Long, userId: Long)
     fun postDisLikeReaction(postId: Long, userId: Long)
+    fun getFollowingUserPostList(pageable: Pageable, userId: Long): Page<GetPostResponse>
 }

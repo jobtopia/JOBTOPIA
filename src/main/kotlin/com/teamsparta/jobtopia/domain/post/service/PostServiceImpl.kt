@@ -1,6 +1,7 @@
 package com.teamsparta.jobtopia.domain.post.service
 
 import com.teamsparta.jobtopia.domain.common.exception.ModelNotFoundException
+import com.teamsparta.jobtopia.domain.follow.repository.FollowRepository
 import com.teamsparta.jobtopia.domain.post.dto.GetPostResponse
 import com.teamsparta.jobtopia.domain.post.dto.PostRequest
 import com.teamsparta.jobtopia.domain.post.dto.PostResponse
@@ -24,7 +25,8 @@ import java.time.LocalDateTime
 class PostServiceImpl(
     private val postRepository: PostRepository,
     private val userRepository: UserRepository,
-    private val reactionService: ReactionService
+    private val reactionService: ReactionService,
+    private val followRepository: FollowRepository
 ): PostService {
 
     override fun getPostList(pageable: Pageable): Page<GetPostResponse> {
@@ -118,5 +120,12 @@ class PostServiceImpl(
         if (post.isDeleted) throw ModelNotFoundException("삭제된 게시글입니다.", postId)
 
         reactionService.updatePostReaction(userId, post, ReactionType.DISLIKE)
+    }
+
+    override fun getFollowingUserPostList(pageable: Pageable, userId: Long): Page<GetPostResponse> {
+        val followingResult = followRepository.findAllByUserId(userId)
+        val result = postRepository.findAllByManyUserId(followingResult.map { it.followingUserId }, pageable)
+
+        return result.map { GetPostResponse.from(it) }
     }
 }
