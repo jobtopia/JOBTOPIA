@@ -14,4 +14,8 @@ interface CommentService {
     fun modifyComment(postId: Long, commentId: Long, commentModifyDTO: CommentModifyDTO, userId: Long): CommentDTO
 
     fun deleteComment(postId: Long, commentId: Long, userId: Long)
+
+    fun commentLikeReaction(postId: Long, commentId: Long, userId: Long)
+
+    fun commentDisLikeReaction(postId: Long, commentId: Long, userId: Long)
 }

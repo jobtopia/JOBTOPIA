@@ -1,5 +1,6 @@
 package com.teamsparta.jobtopia.domain.post.dto
 
+import com.teamsparta.jobtopia.domain.comment.dto.CommentDTO
 import com.teamsparta.jobtopia.domain.post.model.Post
 import com.teamsparta.jobtopia.domain.reaction.dto.ReactionResponse
 import java.time.LocalDateTime

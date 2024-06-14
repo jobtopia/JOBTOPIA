@@ -4,6 +4,7 @@ import com.teamsparta.jobtopia.domain.comment.dto.CommentDTO
 import com.teamsparta.jobtopia.domain.comment.dto.CommentModifyDTO
 import com.teamsparta.jobtopia.domain.comment.dto.CommentPostDTO
 import com.teamsparta.jobtopia.domain.comment.service.CommentService
+import com.teamsparta.jobtopia.domain.reaction.service.ReactionService
 import com.teamsparta.jobtopia.infra.security.UserPrincipal
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -57,5 +58,25 @@ class CommentController(
     ): ResponseEntity<Unit> {
         commentService.deleteComment(postId, commentId, principal.id)
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
+    }
+
+    @PostMapping("/{commentId}/like")
+    fun commentLikeReaction(
+        @PathVariable postId: Long,
+        @PathVariable commentId: Long,
+        @AuthenticationPrincipal principal: UserPrincipal
+    ): ResponseEntity<Unit> {
+        commentService.commentLikeReaction(postId, commentId, principal.id)
+        return ResponseEntity.status(HttpStatus.OK).build()
+    }
+
+    @PostMapping("/{commentId}/dislike")
+    fun commentDisLikeReaction(
+        @PathVariable postId: Long,
+        @PathVariable commentId: Long,
+        @AuthenticationPrincipal principal: UserPrincipal
+    ): ResponseEntity<Unit> {
+        commentService.commentLikeReaction(postId, commentId, principal.id)
+        return ResponseEntity.status(HttpStatus.OK).build()
     }
 }
