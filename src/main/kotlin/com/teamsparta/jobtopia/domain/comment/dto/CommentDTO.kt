@@ -6,8 +6,8 @@ import com.teamsparta.jobtopia.domain.reaction.dto.ReactionResponse
 data class CommentDTO(
     val id: Long?,
     val content: String,
-    var like: Int,
-    var dislike: Int
+    var like: Int = 0,
+    var dislike: Int = 0
 ) {
     companion object {
         fun from(comment: Comment, reaction: ReactionResponse): CommentDTO {
@@ -16,6 +16,12 @@ data class CommentDTO(
                 content = comment.content,
                 like = reaction.like,
                 dislike = reaction.dislike
+            )
+        }
+        fun from(comment: Comment): CommentDTO {
+            return CommentDTO(
+                id = comment.id,
+                content = comment.content,
             )
         }
     }
