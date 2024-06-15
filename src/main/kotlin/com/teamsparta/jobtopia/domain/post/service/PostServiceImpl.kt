@@ -13,6 +13,7 @@ import com.teamsparta.jobtopia.domain.reaction.dto.ReactionResponse
 import com.teamsparta.jobtopia.domain.reaction.model.ReactionType
 import com.teamsparta.jobtopia.domain.reaction.service.ReactionService
 import com.teamsparta.jobtopia.domain.users.repository.UserRepository
+import com.teamsparta.jobtopia.infra.s3.service.S3Service
 import com.teamsparta.jobtopia.infra.security.UserPrincipal
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -20,6 +21,7 @@ import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.core.Authentication
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import org.springframework.web.multipart.MultipartFile
 import java.time.LocalDateTime
 
 @Service
@@ -27,7 +29,8 @@ class PostServiceImpl(
     private val postRepository: PostRepository,
     private val userRepository: UserRepository,
     private val reactionService: ReactionService,
-    private val followRepository: FollowRepository
+    private val followRepository: FollowRepository,
+    private val s3Service: S3Service
 ): PostService {
 
     override fun getPostList(pageable: Pageable): Page<GetPostResponse> {
@@ -45,7 +48,7 @@ class PostServiceImpl(
 
         return post.map {
             val reaction = postToReaction[it.id]
-            GetPostResponse.from(it, reaction!!, it.comments.map { comment -> CommentDTO.from(comment) })
+            GetPostResponse.from(it, reaction!!, it.comments.map { comment -> CommentDTO.from(comment, reactionService.getCountReactions(null, comment.id)) })
         }
 
     }
@@ -57,18 +60,22 @@ class PostServiceImpl(
 
         val reaction = reactionService.getCountReactions(postId, null)
 
-        return GetPostResponse.from(post, reaction, post.comments.map { comment -> CommentDTO.from(comment) })
+        return GetPostResponse.from(post, reaction, post.comments.map { comment -> CommentDTO.from(comment, reactionService.getCountReactions(null, comment.id)) })
     }
 
 
     @Transactional
-    override fun createPost(postRequest: PostRequest,authentication: Authentication): PostResponse {
+    override fun createPost(postRequest: PostRequest,authentication: Authentication, files: MultipartFile?): PostResponse {
         val userPrincipal = authentication.principal as UserPrincipal
         val users = userRepository.findByIdOrNull(userPrincipal.id) ?: throw ModelNotFoundException("없는 user 입니다.", userPrincipal.id)
+
+        val fileUrl = files?.let { s3Service.upload(it) }
+
         return postRepository.save(
             Post(
                 title = postRequest.title,
                 content = postRequest.content,
+                files = fileUrl,
                 users = users
             )
         ).toResponse()
@@ -76,7 +83,7 @@ class PostServiceImpl(
 
 
     @Transactional
-    override fun updatePost(postId: Long, postRequest: PostRequest,authentication: Authentication): GetPostResponse {
+    override fun updatePost(postId: Long, postRequest: PostRequest, authentication: Authentication, files: MultipartFile?): GetPostResponse {
         val userPrincipal = authentication.principal as UserPrincipal
         val users = userRepository.findByIdOrNull(userPrincipal.id) ?: throw ModelNotFoundException("없는 user 입니다.", userPrincipal.id)
         val post = postRepository.findByIdOrNull(postId) ?: throw ModelNotFoundException("삭제된 게시글입니다.", postId)
@@ -85,7 +92,10 @@ class PostServiceImpl(
 
         if (post.isDeleted) throw ModelNotFoundException("삭제된 게시글입니다.", postId)
 
-        post.createPostRequest(postRequest)
+        post.files?.let { s3Service.delete(it.split("m/")[1]) }
+        val imageUrl = files?.let { s3Service.upload(it) }
+
+        post.createPostRequest(postRequest, imageUrl)
         val reaction = reactionService.getCountReactions(post.id!!, null)
         return GetPostResponse.from(postRepository.save(post), reaction)
     }
@@ -97,16 +107,15 @@ class PostServiceImpl(
         val post = postRepository.findByIdOrNull(postId) ?: throw ModelNotFoundException("삭제된 게시글입니다.", postId)
         val users = userRepository.findByIdOrNull(userPrincipal.id) ?: throw ModelNotFoundException("없는 user 입니다.", userPrincipal.id)
 
-
         if(users.id != post.users.id ) throw IllegalStateException("권한이 없습니다.")
 
         if (post.isDeleted) throw ModelNotFoundException("삭제된 게시글입니다.", postId)
 
         post.softDeleted()
         reactionService.deleteReaction(post, null)
+        post.files?.let { s3Service.delete(it.split("m/")[1]) }
 
         post.deletedAt = LocalDateTime.now()
-
     }
 
     override fun postLikeReaction(postId: Long, userId: Long) {

@@ -29,6 +29,9 @@ class Post(
     @Column(name = "is_deleted", nullable = false)
     var isDeleted: Boolean = false,
 
+    @Column(name = "files", nullable = true)
+    var files: String? = null,
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     var users : Users,
@@ -47,9 +50,10 @@ class Post(
         deletedAt =LocalDateTime.now()
     }
 
-    fun createPostRequest(postRequest: PostRequest){
+    fun createPostRequest(postRequest: PostRequest, filesUrl: String?){
         title = postRequest.title
         content = postRequest.content
+        files = filesUrl
         updatedAt = LocalDateTime.now()
     }
 }
@@ -59,6 +63,7 @@ class Post(
             id = id!!,
             title = title,
             content = content,
+            file = files,
             createdAt = createdAt,
             isDeleted = isDeleted
     )

@@ -4,6 +4,7 @@ import com.teamsparta.jobtopia.domain.post.dto.GetPostResponse
 import com.teamsparta.jobtopia.domain.post.dto.PostRequest
 import com.teamsparta.jobtopia.domain.post.dto.PostResponse
 import com.teamsparta.jobtopia.domain.post.service.PostService
+import com.teamsparta.jobtopia.infra.s3.service.S3Service
 import com.teamsparta.jobtopia.infra.security.UserPrincipal
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -13,11 +14,13 @@ import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.multipart.MultipartFile
 
 @RequestMapping("/api/v1/posts")
 @RestController
 class PostController(
     private val postService: PostService,
+    private val s3Service: S3Service
 ) {
 
     @GetMapping
@@ -30,33 +33,35 @@ class PostController(
     }
 
     @GetMapping("/{postId}")
-        fun getPostById(
+    fun getPostById(
         @PathVariable postId: Long
-        ): ResponseEntity<GetPostResponse>{
-          return ResponseEntity
-              .status(HttpStatus.OK)
-              .body(postService.getPostById(postId))
-        }
+    ): ResponseEntity<GetPostResponse>{
+      return ResponseEntity
+          .status(HttpStatus.OK)
+          .body(postService.getPostById(postId))
+    }
 
     @PostMapping
-        fun createPost(
-        @RequestBody postRequest: PostRequest,
-        authentication: Authentication
-        ): ResponseEntity<PostResponse> {
-          return ResponseEntity
-              .status(HttpStatus.CREATED)
-              .body(postService.createPost(postRequest, authentication))
+    fun createPost(
+        @RequestPart("request") postRequest: PostRequest,
+        authentication: Authentication,
+        @RequestPart("file", required = false) file: MultipartFile?
+    ): ResponseEntity<PostResponse> {
+        return ResponseEntity
+          .status(HttpStatus.CREATED)
+          .body(postService.createPost(postRequest, authentication, file))
     }
 
     @PutMapping("/{postId}")
-       fun updatePost(
+    fun updatePost(
         @PathVariable postId: Long,
-        @RequestBody postRequest:PostRequest,
-        authentication: Authentication
-       ): ResponseEntity<GetPostResponse> {
-         return ResponseEntity
+        @RequestPart("request") postRequest:PostRequest,
+        authentication: Authentication,
+        @RequestPart("file", required = false) files: MultipartFile?
+    ): ResponseEntity<GetPostResponse> {
+        return ResponseEntity
              .status(HttpStatus.OK)
-             .body(postService.updatePost(postId, postRequest, authentication))
+             .body(postService.updatePost(postId, postRequest, authentication, files))
     }
 
     @DeleteMapping("/{postId}")
