@@ -10,7 +10,6 @@ import com.teamsparta.jobtopia.domain.post.repository.PostRepository
 import com.teamsparta.jobtopia.domain.reaction.dto.ReactionResponse
 import com.teamsparta.jobtopia.domain.reaction.service.ReactionService
 import com.teamsparta.jobtopia.infra.s3.service.S3Service
-import com.teamsparta.jobtopia.infra.security.UserPrincipal
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
@@ -50,7 +49,7 @@ class AdminServiceImpl(
     }
 
     @Transactional
-    override fun updatePostsByAdminId(postId: Long, postRequest: PostRequest, files: MultipartFile?): GetPostResponse {
+    override fun updatePostsByAdminId(postId: Long, postRequest: PostRequest, file: MultipartFile?): GetPostResponse {
 
         val post = postRepository.findByIdOrNull(postId)
             ?: throw ModelNotFoundException("삭제된 게시글입니다.", postId)
@@ -58,7 +57,7 @@ class AdminServiceImpl(
 
         if (post.isDeleted) throw ModelNotFoundException("삭제된 게시글입니다.", postId)
 
-        val imageUrl = files?.let { s3Service.upload(it) }
+        val imageUrl = file?.let { s3Service.upload(it) }
 
         post.files?.let { s3Service.delete(it.split("m/")[1]) }
 
