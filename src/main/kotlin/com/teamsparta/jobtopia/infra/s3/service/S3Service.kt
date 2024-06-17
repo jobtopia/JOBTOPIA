@@ -22,15 +22,19 @@ class S3Service(
     @Value("\${cloud.aws.s3.bucket}")
     lateinit var bucket: String
 
-    @Value("\${cloud.aws.s3.dir}")
-    lateinit var dir: String
+    var dir: String = "image/"
 
     @Throws(IOException::class)
     fun upload(file: MultipartFile): String {
+        val extension = file.originalFilename?.let { validateFileExtension(it) }
         val fileName = UUID.randomUUID().toString() + "-" + file.originalFilename
+
         val objMeta = ObjectMetadata()
 
         val bytes = IOUtils.toByteArray(file.inputStream)
+        if (extension == "mov" || extension == "mp4") dir = "video/"
+
+        objMeta.contentType = dir + extension
         objMeta.contentLength = bytes.size.toLong()
 
         val byteArrayIs = ByteArrayInputStream(bytes)
@@ -40,6 +44,22 @@ class S3Service(
                 .withCannedAcl(CannedAccessControlList.PublicRead))
 
         return amazonS3Client.getUrl(bucket, dir + fileName).toString()
+    }
+
+    fun delete(fileName: String) {
+        amazonS3Client.deleteObject(bucket, fileName)
+    }
+
+    private fun validateFileExtension(fileName: String): String {
+        val extensionIndex = fileName.lastIndexOf('.')
+
+        val extension = fileName.substring(extensionIndex + 1).toLowerCase()
+        val allowedExtensionList = arrayOf("jpg", "jpeg", "png", "gif", "mov", "mp4")
+
+        if (!allowedExtensionList.contains(extension)) {
+            throw IllegalArgumentException("Invalid extension: $extension")
+        }
+        return fileName.substring(extensionIndex + 1)
     }
 
 }

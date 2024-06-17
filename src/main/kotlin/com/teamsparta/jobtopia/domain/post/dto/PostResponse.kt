@@ -6,6 +6,7 @@ data class PostResponse (
     val id : Long,
     val title : String,
     val content : String,
+    val file : String?,
     val createdAt : LocalDateTime,
     val isDeleted : Boolean,
 )
