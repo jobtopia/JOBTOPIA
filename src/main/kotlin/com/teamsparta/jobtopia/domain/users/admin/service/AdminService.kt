@@ -12,7 +12,7 @@ import org.springframework.web.multipart.MultipartFile
 interface AdminService {
 
     fun getPostsByAdminId(pageable: Pageable) : Page<GetPostResponse>
-    fun updatePostsByAdminId(postId:Long, postRequest: PostRequest, image: MultipartFile?) :GetPostResponse
+    fun updatePostsByAdminId(postId:Long, postRequest: PostRequest, file: MultipartFile?) :GetPostResponse
     fun deletePostsByAdminId(postId:Long)
     fun updateCommentsByAdminId(postId: Long,commentId:Long,commentModifyDTO: CommentModifyDTO) :CommentDTO
     fun deleteCommentsByAdminId(postId: Long,commentId:Long)
