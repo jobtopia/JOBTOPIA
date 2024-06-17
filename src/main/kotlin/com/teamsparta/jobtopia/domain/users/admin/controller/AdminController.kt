@@ -27,19 +27,18 @@ class AdminController(
        return ResponseEntity.status(HttpStatus.OK).body(adminService.getPostsByAdminId(pageable))
     }
 
-    @PutMapping("/posts/{postId}", consumes = ["multipart/form-data"])
+    @PutMapping("/posts/{postId}")
     @PreAuthorize("hasRole('ADMIN')")
     fun updatePostsByAdmin(
         @PathVariable postId: Long,
-        @RequestParam("title") title: String,
-        @RequestParam("content") content: String,
-        @RequestPart("file", required = false) file: MultipartFile?
+        @RequestPart("request") postRequest:PostRequest,
+        @RequestPart("file", required = false) files: MultipartFile?
     ): ResponseEntity<GetPostResponse> {
-        val postRequest = PostRequest(title, content)
         return ResponseEntity
             .status(HttpStatus.OK)
-            .body(adminService.updatePostsByAdminId(postId, postRequest, file))
+            .body(adminService.updatePostsByAdminId(postId, postRequest, files))
     }
+
 
     @DeleteMapping("/posts/{postId}")
     @PreAuthorize("hasRole('ADMIN')")
